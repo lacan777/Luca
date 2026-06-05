@@ -90,9 +90,6 @@ function App() {
 
   const playRecordedNarration = async () => {
     const src = `/narration/${page.id}.mp3`;
-    const response = await fetch(src, { method: 'HEAD' }).catch(() => null);
-
-    if (!response?.ok) return false;
 
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -101,10 +98,14 @@ function App() {
     const audio = narrationAudioRef.current;
     if (!audio) return false;
 
-    audio.src = src;
-    audio.currentTime = 0;
-    await audio.play();
-    return true;
+    try {
+      audio.src = src;
+      audio.currentTime = 0;
+      await audio.play();
+      return true;
+    } catch (error) {
+      return false;
+    }
   };
 
   const narratePage = async () => {
